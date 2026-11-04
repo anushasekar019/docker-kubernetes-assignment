@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: student-portal-deployment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: student-portal
+
+  template:
+    metadata:
+      labels:
+        app: student-portal
+
+    spec:
+      containers:
+        - name: student-portal-container
+
+          image: devops-student-portal:v1
+
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 5000
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 20
